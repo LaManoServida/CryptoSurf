@@ -1,5 +1,4 @@
 import argparse
-from inspect import getmembers
 
 import pandas as pd
 from binance import Client
@@ -27,11 +26,18 @@ if __name__ == '__main__':  # TODO: support custom start time
         raise ValueError
 
 
+    def get_interval_choices():
+        return [Client.KLINE_INTERVAL_1MINUTE, Client.KLINE_INTERVAL_3MINUTE, Client.KLINE_INTERVAL_5MINUTE,
+                Client.KLINE_INTERVAL_15MINUTE, Client.KLINE_INTERVAL_30MINUTE, Client.KLINE_INTERVAL_1HOUR,
+                Client.KLINE_INTERVAL_2HOUR, Client.KLINE_INTERVAL_4HOUR, Client.KLINE_INTERVAL_6HOUR,
+                Client.KLINE_INTERVAL_8HOUR, Client.KLINE_INTERVAL_12HOUR, Client.KLINE_INTERVAL_1DAY,
+                Client.KLINE_INTERVAL_3DAY, Client.KLINE_INTERVAL_1WEEK, Client.KLINE_INTERVAL_1MONTH]
+
+
     parser = argparse.ArgumentParser(description='Generates the dataset of candelstick historical data.',
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('symbol', help='the currency pair')
-    parser.add_argument('-i', '--interval', default='30m',
-                        choices=[v for k, v in getmembers(Client) if k.startswith('KLINE_INTERVAL_')],
+    parser.add_argument('-i', '--interval', default=Client.KLINE_INTERVAL_30MINUTE, choices=get_interval_choices(),
                         help='duration of each candlestick')
     parser.add_argument('-l', '--limit', default=1000, type=parse_limit, help='number of candlesticks')
 
