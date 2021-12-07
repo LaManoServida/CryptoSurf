@@ -6,7 +6,7 @@ import pandas as pd
 from binance import Client
 from dateutil.relativedelta import relativedelta
 
-from keys import api_key, api_secret
+from config import api_key, api_secret
 
 DATASET_FOLDER = './datasets'
 
@@ -41,7 +41,7 @@ def create_dataset(args):
     start_time = calculate_start_time(args.interval, args.number_candles)
 
     # create client
-    client = Client(api_key, api_secret)  # TODO: support key file
+    client = Client(api_key, api_secret)
 
     # download candlestick data (exclude the last one as is not complete yet)
     candles = client.get_historical_klines(symbol=args.symbol, interval=args.interval, start_str=start_time)[:-1]
