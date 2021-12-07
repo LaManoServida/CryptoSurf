@@ -65,8 +65,9 @@ if __name__ == '__main__':
                 Client.KLINE_INTERVAL_3DAY, Client.KLINE_INTERVAL_1WEEK, Client.KLINE_INTERVAL_1MONTH]
 
 
-    parser = argparse.ArgumentParser(description='Generates the dataset of latest candelstick historical data.',
-                                     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser = argparse.ArgumentParser(
+        description='Generates the dataset of latest candelstick historical data, and saves it to ./datasets/',
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('symbol', help='the currency pair')
     parser.add_argument('-i', '--interval', default=Client.KLINE_INTERVAL_30MINUTE, choices=get_interval_choices(),
                         help='duration of each candlestick')
