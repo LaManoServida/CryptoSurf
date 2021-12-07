@@ -64,6 +64,7 @@ if __name__ == '__main__':
     parser.add_argument('symbol', help='the currency pair')
     parser.add_argument('-i', '--interval', default=Client.KLINE_INTERVAL_30MINUTE, choices=get_interval_choices(),
                         help='duration of each candlestick')
-    parser.add_argument('-n', default=1000, type=int, help='number of last candlesticks', dest='number_candles')
+    parser.add_argument('-n', '--number-candles', default=1000, type=int, help='number of last candlesticks',
+                        dest='number_candles')
 
     create_dataset(parser.parse_args())
