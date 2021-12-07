@@ -1,11 +1,14 @@
 import argparse
 from datetime import datetime
+from os import path, makedirs
 
 import pandas as pd
 from binance import Client
 from dateutil.relativedelta import relativedelta
 
 from keys import api_key, api_secret
+
+DATASET_FOLDER = './datasets'
 
 
 def calculate_start_time(interval, number_candles):
@@ -47,7 +50,10 @@ def create_dataset(args):
     candles = pd.DataFrame([candle[1:5] for candle in candles], columns=['open', 'high', 'low', 'close'], dtype=float)
 
     # save it to csv
-    candles.to_csv('data.csv', index=False)  # TODO: support custom csv path
+    makedirs(DATASET_FOLDER, exist_ok=True)
+    file_name = f'candles_{args.number_candles}_{args.interval}_{start_time}.csv'
+    file_path = path.join(DATASET_FOLDER, file_name)
+    candles.to_csv(file_path, index=False)
 
 
 if __name__ == '__main__':
