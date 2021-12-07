@@ -8,12 +8,12 @@ from dateutil.relativedelta import relativedelta
 from keys import api_key, api_secret
 
 
-def calculate_start_time(interval, limit):
+def calculate_start_time(interval, number_candles):
     # split interval into coeficient and unit (for example: '30m' --> 30, 'm')
     interval_coef, interval_unit = int(interval[:-1]), interval[-1]
 
     # total units of time
-    num_units = interval_coef * limit + 1  # +1 because the most recent one is never complete
+    num_units = interval_coef * number_candles + 1  # +1 because the most recent one is never complete
 
     # calculate time span of data
     time_interval = {
@@ -35,7 +35,7 @@ def create_dataset(args):
     """Download candlestick history and save it to csv"""
 
     # calculate start time
-    start_time = calculate_start_time(args.interval, args.limit)
+    start_time = calculate_start_time(args.interval, args.number_candles)
 
     # create client
     client = Client(api_key, api_secret)  # TODO: support key file
@@ -64,7 +64,6 @@ if __name__ == '__main__':
     parser.add_argument('symbol', help='the currency pair')
     parser.add_argument('-i', '--interval', default=Client.KLINE_INTERVAL_30MINUTE, choices=get_interval_choices(),
                         help='duration of each candlestick')
-    # TODO change "Limit" to "num" or "number"
-    parser.add_argument('-l', '--limit', default=1000, type=int, help='number of last candlesticks')
+    parser.add_argument('-n', default=1000, type=int, help='number of last candlesticks', dest='number_candles')
 
     create_dataset(parser.parse_args())
