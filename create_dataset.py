@@ -31,7 +31,7 @@ def calculate_start_time(interval, limit):
     return start_time
 
 
-def main(args):
+def create_dataset(args):
     """Download candlestick history and save it to csv"""
 
     # calculate start time
@@ -67,4 +67,4 @@ if __name__ == '__main__':
     # TODO change "Limit" to "num" or "number"
     parser.add_argument('-l', '--limit', default=1000, type=int, help='number of last candlesticks')
 
-    main(parser.parse_args())
+    create_dataset(parser.parse_args())
