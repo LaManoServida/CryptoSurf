@@ -6,9 +6,7 @@ import pandas as pd
 from binance import Client
 from dateutil.relativedelta import relativedelta
 
-from config import api_key, api_secret
-
-DATASET_FOLDER = './datasets'
+from config import api_key, api_secret, dataset_directory
 
 
 def calculate_start_time(interval, number_candles):
@@ -50,9 +48,9 @@ def create_dataset(args):
     candles = pd.DataFrame([candle[1:5] for candle in candles], columns=['open', 'high', 'low', 'close'], dtype=float)
 
     # save it to csv
-    makedirs(DATASET_FOLDER, exist_ok=True)
+    makedirs(dataset_directory, exist_ok=True)
     file_name = f'candles_{args.number_candles}_{args.interval}_{start_time}.csv'
-    file_path = path.join(DATASET_FOLDER, file_name)
+    file_path = path.join(dataset_directory, file_name)
     candles.to_csv(file_path, index=False)
 
 
@@ -65,9 +63,9 @@ if __name__ == '__main__':
                 Client.KLINE_INTERVAL_3DAY, Client.KLINE_INTERVAL_1WEEK, Client.KLINE_INTERVAL_1MONTH]
 
 
-    parser = argparse.ArgumentParser(
-        description='Generates the dataset of latest candelstick historical data, and saves it to ./datasets/',
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser = argparse.ArgumentParser(description='Generates the dataset of latest candelstick historical data, '
+                                                 'and saves it by default to ./datasets/',
+                                     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('symbol', help='the currency pair')
     parser.add_argument('-i', '--interval', default=Client.KLINE_INTERVAL_30MINUTE, choices=get_interval_choices(),
                         help='duration of each candlestick')
