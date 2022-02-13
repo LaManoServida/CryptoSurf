@@ -9,4 +9,4 @@ config.read('config-local.ini')
 # extract constants
 api_key = config['binance']['api_key']
 api_secret = config['binance']['api_secret']
-dataset = config['training']['dataset']
+dataset_directory = config['training']['dataset_directory']
