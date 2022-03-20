@@ -55,19 +55,17 @@ def create_dataset(args):
 
 
 if __name__ == '__main__':
-    def get_interval_choices():
-        return [Client.KLINE_INTERVAL_1MINUTE, Client.KLINE_INTERVAL_3MINUTE, Client.KLINE_INTERVAL_5MINUTE,
-                Client.KLINE_INTERVAL_15MINUTE, Client.KLINE_INTERVAL_30MINUTE, Client.KLINE_INTERVAL_1HOUR,
-                Client.KLINE_INTERVAL_2HOUR, Client.KLINE_INTERVAL_4HOUR, Client.KLINE_INTERVAL_6HOUR,
-                Client.KLINE_INTERVAL_8HOUR, Client.KLINE_INTERVAL_12HOUR, Client.KLINE_INTERVAL_1DAY,
-                Client.KLINE_INTERVAL_3DAY, Client.KLINE_INTERVAL_1WEEK, Client.KLINE_INTERVAL_1MONTH]
-
+    interval_choices = [Client.KLINE_INTERVAL_1MINUTE, Client.KLINE_INTERVAL_3MINUTE, Client.KLINE_INTERVAL_5MINUTE,
+                        Client.KLINE_INTERVAL_15MINUTE, Client.KLINE_INTERVAL_30MINUTE, Client.KLINE_INTERVAL_1HOUR,
+                        Client.KLINE_INTERVAL_2HOUR, Client.KLINE_INTERVAL_4HOUR, Client.KLINE_INTERVAL_6HOUR,
+                        Client.KLINE_INTERVAL_8HOUR, Client.KLINE_INTERVAL_12HOUR, Client.KLINE_INTERVAL_1DAY,
+                        Client.KLINE_INTERVAL_3DAY, Client.KLINE_INTERVAL_1WEEK, Client.KLINE_INTERVAL_1MONTH]
 
     parser = argparse.ArgumentParser(description='Generates the dataset of latest candelstick historical data, '
                                                  'and saves it by default to ./datasets/',
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('symbol', help='the currency pair')
-    parser.add_argument('-i', '--interval', default=Client.KLINE_INTERVAL_30MINUTE, choices=get_interval_choices(),
+    parser.add_argument('-i', '--interval', default=Client.KLINE_INTERVAL_30MINUTE, choices=interval_choices,
                         help='duration of each candlestick')
     parser.add_argument('-n', '--number-candles', default=1000, type=int, help='number of last candlesticks',
                         dest='number_candles')
