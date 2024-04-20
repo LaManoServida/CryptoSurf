@@ -1,6 +1,6 @@
 import argparse
+import os
 from datetime import datetime
-from os import path, makedirs
 
 import pandas as pd
 from binance import Client
@@ -32,7 +32,7 @@ def calculate_start_time(interval, number_candles):
     return start_time
 
 
-def create_dataset(args):
+def download_raw_dataset(args):
     """Download candlestick history and save it to csv"""
 
     # calculate start time
@@ -48,9 +48,9 @@ def create_dataset(args):
     candles = pd.DataFrame([candle[1:5] for candle in candles], columns=['open', 'high', 'low', 'close'], dtype=float)
 
     # save it to csv
-    makedirs(dataset_directory, exist_ok=True)
+    os.makedirs(dataset_directory, exist_ok=True)
     file_name = f'candles_{args.number_candles}_{args.interval}_{start_time}.csv'
-    file_path = path.join(dataset_directory, file_name)
+    file_path = os.path.join(dataset_directory, file_name)
     candles.to_csv(file_path, index=False)
 
 
@@ -70,4 +70,4 @@ if __name__ == '__main__':
     parser.add_argument('-n', '--number-candles', default=1000, type=int, help='number of last candlesticks',
                         dest='number_candles')
 
-    create_dataset(parser.parse_args())
+    download_raw_dataset(parser.parse_args())
