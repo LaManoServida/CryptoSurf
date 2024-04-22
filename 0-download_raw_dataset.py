@@ -32,24 +32,24 @@ def calculate_start_time(interval, number_candles):
     return start_time
 
 
-def download_raw_dataset(args):
+def download_raw_dataset(symbol, interval, number_candles):
     """ Download candlestick history and save it to csv, returning the file path """
 
     # calculate start time
-    start_time = calculate_start_time(args.interval, args.number_candles)
+    start_time = calculate_start_time(interval, number_candles)
 
     # create client
     client = Client(api_key, api_secret)
 
     # download candlestick data (exclude the last one as is not complete yet)
-    candles = client.get_historical_klines(symbol=args.symbol, interval=args.interval, start_str=start_time)[:-1]
+    candles = client.get_historical_klines(symbol=symbol, interval=interval, start_str=start_time)[:-1]
 
     # get columns of interest and set data type
     candles = pd.DataFrame([candle[1:5] for candle in candles], columns=['open', 'high', 'low', 'close'], dtype=float)
 
     # save it to csv
     os.makedirs(dataset_directory, exist_ok=True)
-    file_name = f'candles_{args.symbol}_{args.number_candles}_{args.interval}_{start_time}.csv'
+    file_name = f'candles_{symbol}_{number_candles}_{interval}_{start_time}.csv'
     file_path = os.path.join(dataset_directory, file_name)
     candles.to_csv(file_path, index=False)
 
@@ -72,4 +72,4 @@ if __name__ == '__main__':
     parser.add_argument('-n', '--number-candles', default=1000, type=int, help='number of last candlesticks',
                         dest='number_candles')
 
-    download_raw_dataset(parser.parse_args())
+    download_raw_dataset(**vars(parser.parse_args()))
