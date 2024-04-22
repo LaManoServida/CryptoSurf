@@ -49,7 +49,7 @@ def download_raw_dataset(args):
 
     # save it to csv
     os.makedirs(dataset_directory, exist_ok=True)
-    file_name = f'candles_{args.number_candles}_{args.interval}_{start_time}.csv'
+    file_name = f'candles_{args.symbol}_{args.number_candles}_{args.interval}_{start_time}.csv'
     file_path = os.path.join(dataset_directory, file_name)
     candles.to_csv(file_path, index=False)
 
