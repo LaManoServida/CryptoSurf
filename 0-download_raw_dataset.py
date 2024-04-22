@@ -33,7 +33,7 @@ def calculate_start_time(interval, number_candles):
 
 
 def download_raw_dataset(args):
-    """Download candlestick history and save it to csv"""
+    """ Download candlestick history and save it to csv, returning the file path """
 
     # calculate start time
     start_time = calculate_start_time(args.interval, args.number_candles)
@@ -52,6 +52,8 @@ def download_raw_dataset(args):
     file_name = f'candles_{args.number_candles}_{args.interval}_{start_time}.csv'
     file_path = os.path.join(dataset_directory, file_name)
     candles.to_csv(file_path, index=False)
+
+    return file_path
 
 
 if __name__ == '__main__':
