@@ -41,11 +41,15 @@ def download_raw_dataset(symbol, interval, number_candles):
     # create client
     client = Client(api_key, api_secret)
 
-    # download candlestick data (exclude the last one as is not complete yet)
+    # download candlestick data (exclude the last one as it is not complete yet)
     candles = client.get_historical_klines(symbol=symbol, interval=interval, start_str=start_time)[:-1]
 
     # get columns of interest and set data type
-    candles = pd.DataFrame([candle[1:5] for candle in candles], columns=['open', 'high', 'low', 'close'], dtype=float)
+    candles = pd.DataFrame(
+        candles,
+        columns=['open_time', 'open', 'high', 'low', 'close', 'volume', 'close_time', 'quote_asset_volume',
+                 'number_of_trades', 'taker_buy_base_asset_volume', 'taker_buy_quote_asset_volume', 'ignore'],
+    ).drop('ignore', axis=1)
 
     # save it to csv
     os.makedirs(dataset_directory, exist_ok=True)
