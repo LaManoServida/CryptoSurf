@@ -6,7 +6,7 @@ import pandas as pd
 from binance import Client
 from dateutil.relativedelta import relativedelta
 
-from config import api_key, api_secret, dataset_directory
+from config import api_key, api_secret, default_dataset_directory
 
 
 def calculate_start_time(interval, number_candles):
@@ -32,7 +32,7 @@ def calculate_start_time(interval, number_candles):
     return start_time
 
 
-def download_raw_dataset(symbol, interval, number_candles):
+def download_raw_dataset(symbol, interval, number_candles, dataset_directory=default_dataset_directory):
     """ Download candlestick history and save it to csv, returning the file path """
 
     # calculate start time
@@ -68,12 +68,15 @@ if __name__ == '__main__':
                         Client.KLINE_INTERVAL_3DAY, Client.KLINE_INTERVAL_1WEEK, Client.KLINE_INTERVAL_1MONTH]
 
     parser = argparse.ArgumentParser(
-        description='Downloads the latest candelstick historical data, and saves it by default to ./datasets/',
+        description='Downloads the latest candelstick historical data, and saves it by default to ' +
+                    default_dataset_directory,
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('symbol', help='the currency pair')
     parser.add_argument('-i', '--interval', default=Client.KLINE_INTERVAL_30MINUTE, choices=interval_choices,
                         help='duration of each candlestick')
     parser.add_argument('-n', '--number-candles', default=1000, type=int, help='number of last candlesticks',
                         dest='number_candles')
+    parser.add_argument('--dataset-directory', default=default_dataset_directory,
+                        help='destionation of the downloaded dataset', dest='dataset_directory')
 
     download_raw_dataset(**vars(parser.parse_args()))
