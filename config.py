@@ -2,7 +2,7 @@ from configparser import ConfigParser
 
 config = ConfigParser()
 
-# open config file and try to open custom one if it exists
+# open config file and try to open the custom one if it exists
 config.read('config.ini')
 config.read('config-local.ini')
 
