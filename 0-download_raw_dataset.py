@@ -68,7 +68,7 @@ if __name__ == '__main__':
                         Client.KLINE_INTERVAL_3DAY, Client.KLINE_INTERVAL_1WEEK, Client.KLINE_INTERVAL_1MONTH]
 
     parser = argparse.ArgumentParser(
-        description='Downloads the latest candelstick historical data, and saves it by default to ' +
+        description='Download the latest candelstick historical data, and save it by default to ' +
                     default_dataset_directory,
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('symbol', help='the currency pair')
