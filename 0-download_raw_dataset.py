@@ -33,7 +33,10 @@ def _calculate_start_time(interval, number_candles):
 
 
 def download_raw_dataset(symbol, interval, number_candles, dataset_directory=default_dataset_directory):
-    """ Download candlestick history and save it to csv, returning the file path """
+    """Download the latest candelstick historical data and save it by default to `default_dataset_directory`.
+    Returns:
+        the file path of the dataset
+    """
 
     # calculate start time
     start_time = _calculate_start_time(interval, number_candles + 1)
@@ -68,8 +71,7 @@ if __name__ == '__main__':
                         Client.KLINE_INTERVAL_3DAY, Client.KLINE_INTERVAL_1WEEK, Client.KLINE_INTERVAL_1MONTH]
 
     parser = argparse.ArgumentParser(
-        description='Download the latest candelstick historical data, and save it by default to ' +
-                    default_dataset_directory,
+        description=download_raw_dataset.__doc__,
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('symbol', help='the currency pair')
     parser.add_argument('-i', '--interval', default=Client.KLINE_INTERVAL_30MINUTE, choices=interval_choices,
@@ -79,4 +81,4 @@ if __name__ == '__main__':
     parser.add_argument('--dataset-directory', default=default_dataset_directory,
                         help='destionation of the downloaded dataset', dest='dataset_directory')
 
-    download_raw_dataset(**vars(parser.parse_args()))
+    print(download_raw_dataset(**vars(parser.parse_args())))

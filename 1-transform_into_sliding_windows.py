@@ -10,6 +10,13 @@ from config import default_dataset_directory
 
 def transform_into_sliding_windows(raw_dataset_path, x_window_size, forecast_window_size, threshold_percentage,
                                    window_gap, stride, output_dataset_directory=default_dataset_directory):
+    """
+    Transform a raw dataset into sliding windows, calculating two boolean classes "up" and "down", which are true if
+    any point in the forecast window goes up or down, respectively, past the given threshold, with respect to the
+    last point of the "X" window. If no point exceeds the threshold, "y" is 0.
+    Returns:
+        The file path of the resulting transformed dataset
+    """
     # read dataframe
     df = pd.read_csv(raw_dataset_path)
 
@@ -45,11 +52,7 @@ def transform_into_sliding_windows(raw_dataset_path, x_window_size, forecast_win
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Transforms a raw dataset into sliding windows, calculating two '
-                                                 'boolean classes "up" and "down", which are true if any point in the '
-                                                 'forecast window goes up or down, respectively, past the given '
-                                                 'threshold, with respect to the last point of the "X" window. If no '
-                                                 'point exceeds the threshold, "y" is 0',
+    parser = argparse.ArgumentParser(description=transform_into_sliding_windows.__doc__,
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('raw_dataset_path', help='path of the raw dataset')
     parser.add_argument('x_window_size', default=100, type=int, help='size of the "X" window')
@@ -64,4 +67,4 @@ if __name__ == '__main__':
     parser.add_argument('--output-dataset-directory', default=default_dataset_directory,
                         help='destionation of the downloaded dataset', dest='output_dataset_directory')
 
-    transform_into_sliding_windows(**vars(parser.parse_args()))
+    print(transform_into_sliding_windows(**vars(parser.parse_args())))
