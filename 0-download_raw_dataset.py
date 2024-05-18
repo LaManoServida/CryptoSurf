@@ -9,7 +9,7 @@ from dateutil.relativedelta import relativedelta
 from config import api_key, api_secret, default_dataset_directory
 
 
-def calculate_start_time(interval, number_candles):
+def _calculate_start_time(interval, number_candles):
     # split interval into coeficient and unit (for example: '30m' --> 30, 'm')
     interval_coef, interval_unit = int(interval[:-1]), interval[-1]
 
@@ -36,7 +36,7 @@ def download_raw_dataset(symbol, interval, number_candles, dataset_directory=def
     """ Download candlestick history and save it to csv, returning the file path """
 
     # calculate start time
-    start_time = calculate_start_time(interval, number_candles + 1)
+    start_time = _calculate_start_time(interval, number_candles + 1)
 
     # create client
     client = Client(api_key, api_secret)
