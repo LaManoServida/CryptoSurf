@@ -11,9 +11,9 @@ from config import default_dataset_directory
 def transform_into_sliding_windows(raw_dataset_path, x_window_size, forecast_window_size, threshold_percentage,
                                    window_gap, stride, output_dataset_directory=default_dataset_directory):
     """
-    Transform a raw dataset into sliding windows, calculating two boolean classes "up" and "down", which are true if
-    any point in the forecast window goes up or down, respectively, past the given threshold, with respect to the
-    last point of the "X" window. If no point exceeds the threshold, "y" is 0.
+    Transform and save a raw dataset into sliding windows, calculating two boolean classes "up" and "down",
+    which are true if any point in the forecast window goes up or down, respectively, past the given threshold,
+    with respect to the last point of the "X" window. If no point exceeds the threshold, "y" is 0.
     Returns:
         The file path of the resulting transformed dataset
     """

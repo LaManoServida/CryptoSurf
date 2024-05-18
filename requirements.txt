@@ -3,3 +3,4 @@ numpy
 pandas
 python-dateutil
 h5py
+keras
