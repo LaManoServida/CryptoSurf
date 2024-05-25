@@ -10,11 +10,11 @@ from config import api_key, api_secret, default_dataset_directory
 
 
 def _calculate_start_time(interval, number_candles):
-    # split interval into coeficient and unit (for example: '30m' --> 30, 'm')
-    interval_coef, interval_unit = int(interval[:-1]), interval[-1]
+    # split interval into coefficient and unit (for example: '30m' --> 30, 'm')
+    interval_coefficient, interval_unit = int(interval[:-1]), interval[-1]
 
     # total units of time
-    num_units = interval_coef * number_candles + 1  # +1 because the most recent one is never complete
+    num_units = interval_coefficient * number_candles + 1  # +1 because the most recent one is never complete
 
     # calculate time span of data
     time_interval = {
@@ -33,7 +33,7 @@ def _calculate_start_time(interval, number_candles):
 
 
 def download_raw_dataset(symbol, interval, number_candles, dataset_directory=default_dataset_directory):
-    """Download the latest candelstick historical data and save it by default to `default_dataset_directory`.
+    """Download the latest candlestick historical data and save it by default to `default_dataset_directory`.
     Returns:
         the file path of the dataset
     """
@@ -79,6 +79,6 @@ if __name__ == '__main__':
     parser.add_argument('-n', '--number-candles', default=1000, type=int, help='number of last candlesticks',
                         dest='number_candles')
     parser.add_argument('--dataset-directory', default=default_dataset_directory,
-                        help='destionation of the downloaded dataset', dest='dataset_directory')
+                        help='destination of the downloaded dataset', dest='dataset_directory')
 
     print(download_raw_dataset(**vars(parser.parse_args())))

@@ -59,12 +59,12 @@ if __name__ == '__main__':
     parser.add_argument('forecast_window_size', default=5, type=int,
                         help='size of the forecast window used to compute the classes')
     parser.add_argument('threshold_percentage', type=float,
-                        help='percentage of the last point of the "X" window, which is added and substracted to make '
+                        help='percentage of the last point of the "X" window, which is added and subtracted to make '
                              'the positive and negative thresholds')
     parser.add_argument('-g', '--window-gap', default=0, type=int, dest='window_gap',
-                        help='number of timesteps between "X" window and forecast window')
+                        help='number of time steps between "X" window and forecast window')
     parser.add_argument('-s', '--stride', default=1, type=int, help='stride of the sliding windows')
     parser.add_argument('--output-dataset-directory', default=default_dataset_directory,
-                        help='destionation of the downloaded dataset', dest='output_dataset_directory')
+                        help='destination of the downloaded dataset', dest='output_dataset_directory')
 
     print(transform_into_sliding_windows(**vars(parser.parse_args())))
