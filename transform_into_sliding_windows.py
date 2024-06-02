@@ -8,7 +8,7 @@ import pandas as pd
 from config import default_dataset_directory
 
 
-def transform_into_sliding_windows(raw_dataset_path, x_window_size, forecast_window_size, buying_fee_percentage,
+def transform_into_sliding_windows(raw_dataset_path, x_window_size, forecast_window_size, trading_fee_percentage,
                                    window_gap, stride, output_dataset_directory=default_dataset_directory):
     """
     Transform and save a raw dataset into sliding windows, calculating two boolean classes "up" and "down",
@@ -41,9 +41,9 @@ def transform_into_sliding_windows(raw_dataset_path, x_window_size, forecast_win
         forecast_window = df_array[
                           i + x_window_size + window_gap:i + x_window_size + window_gap + forecast_window_size,
                           close_index]
-        threshold = x_window[-1, close_index] / (1 - buying_fee_percentage / 100)
-        up_list.append(np.any(forecast_window > threshold))
-        down_list.append(np.any(forecast_window < threshold))
+        profit_threshold = x_window[-1, close_index] / (1 - trading_fee_percentage / 100)
+        up_list.append(np.any(forecast_window > profit_threshold))
+        down_list.append(np.any(forecast_window < profit_threshold))
 
     # save the data
     output_filename = os.path.splitext(os.path.basename(raw_dataset_path))[0].replace('candles', 'windows')
@@ -64,7 +64,7 @@ if __name__ == '__main__':
     parser.add_argument('x_window_size', default=100, type=int, help='size of the "X" window')
     parser.add_argument('forecast_window_size', default=5, type=int,
                         help='size of the forecast window used to compute the classes')
-    parser.add_argument('buying_fee_percentage', type=float,
+    parser.add_argument('trading_fee_percentage', type=float,
                         help='fee as a percentage of the asset purchased')
     parser.add_argument('-g', '--window-gap', default=0, type=int, dest='window_gap',
                         help='number of time steps between "X" window and forecast window')
