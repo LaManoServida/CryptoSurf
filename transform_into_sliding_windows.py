@@ -11,9 +11,9 @@ from config import default_dataset_directory
 def transform_into_sliding_windows(raw_dataset_path, x_window_size, forecast_window_size, trading_fee_percentage,
                                    window_gap, stride, output_dataset_directory=default_dataset_directory):
     """
-    Transform and save a raw dataset into sliding windows, calculating two boolean classes "up" and "down",
-    which are true if any point in the forecast window goes up or down, respectively, taking fees into account,
-    with respect to the last point of the "X" window. If no point exceeds the threshold, "y" is 0.
+    Transform and save a raw dataset into sliding windows, calculating a boolean class "up", which is true if any
+    point in the forecast window goes up, taking buying and selling fees into account, with respect to the last point of
+    the "X" window. If no point exceeds the threshold, "y" is 0.
     Returns:
         The file path of the resulting transformed dataset
     """
@@ -29,7 +29,6 @@ def transform_into_sliding_windows(raw_dataset_path, x_window_size, forecast_win
     # initialize the lists
     x_windows_list = []
     up_list = []
-    down_list = []
 
     # iterate over the dataset
     for i in range(0, len(df) - (x_window_size + window_gap + forecast_window_size), stride):
@@ -43,7 +42,6 @@ def transform_into_sliding_windows(raw_dataset_path, x_window_size, forecast_win
                           close_index]
         profit_threshold = x_window[-1, close_index] / (1 - trading_fee_percentage / 100) ** 2
         up_list.append(np.any(forecast_window > profit_threshold))
-        down_list.append(np.any(forecast_window < profit_threshold))
 
     # save the data
     output_filename = os.path.splitext(os.path.basename(raw_dataset_path))[0].replace('candles', 'windows')
@@ -52,7 +50,6 @@ def transform_into_sliding_windows(raw_dataset_path, x_window_size, forecast_win
         x_dataset = f.create_dataset('x', data=np.array(x_windows_list))
         x_dataset.attrs['columns'] = df.columns.tolist()
         f.create_dataset('up', data=np.array(up_list))
-        f.create_dataset('down', data=np.array(down_list))
 
     return output_file_path
 
@@ -63,7 +60,7 @@ if __name__ == '__main__':
     parser.add_argument('raw_dataset_path', help='path of the raw dataset')
     parser.add_argument('x_window_size', default=100, type=int, help='size of the "X" window')
     parser.add_argument('forecast_window_size', default=5, type=int,
-                        help='size of the forecast window used to compute the classes')
+                        help='size of the forecast window used to compute the class')
     parser.add_argument('trading_fee_percentage', type=float,
                         help='fee as a percentage of the asset purchased')
     parser.add_argument('-g', '--window-gap', default=0, type=int, dest='window_gap',
