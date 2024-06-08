@@ -41,7 +41,7 @@ def transform_into_sliding_windows(raw_dataset_path, x_window_size, forecast_win
         forecast_window = df_array[
                           i + x_window_size + window_gap:i + x_window_size + window_gap + forecast_window_size,
                           close_index]
-        profit_threshold = x_window[-1, close_index] / (1 - trading_fee_percentage / 100)
+        profit_threshold = x_window[-1, close_index] / (1 - trading_fee_percentage / 100) ** 2
         up_list.append(np.any(forecast_window > profit_threshold))
         down_list.append(np.any(forecast_window < profit_threshold))
 
