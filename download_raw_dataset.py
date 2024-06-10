@@ -44,8 +44,8 @@ def download_raw_dataset(symbol, interval, number_candles, dataset_directory=def
     # create client
     client = Client(api_key, api_secret)
 
-    # download candlestick data (exclude the last one as it is not complete yet)
-    candles = client.get_historical_klines(symbol=symbol, interval=interval, start_str=start_time)[:-1]
+    # download candlestick data (potentially exclude the last one as it is not complete yet)
+    candles = client.get_historical_klines(symbol=symbol, interval=interval, start_str=start_time)[:number_candles]
 
     # get columns of interest and set data type
     candles = pd.DataFrame(
@@ -56,7 +56,7 @@ def download_raw_dataset(symbol, interval, number_candles, dataset_directory=def
 
     # save it to csv
     os.makedirs(dataset_directory, exist_ok=True)
-    file_name = f'candles({symbol},{number_candles + 1},{interval},{start_time}).csv'
+    file_name = f'candles({symbol},{number_candles},{interval},{start_time}).csv'
     file_path = os.path.join(dataset_directory, file_name)
     candles.to_csv(file_path, index=False)
 
