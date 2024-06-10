@@ -74,10 +74,9 @@ if __name__ == '__main__':
         description=download_raw_dataset.__doc__,
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('symbol', help='the currency pair')
-    parser.add_argument('-i', '--interval', default=Client.KLINE_INTERVAL_30MINUTE, choices=interval_choices,
+    parser.add_argument('interval', default=Client.KLINE_INTERVAL_30MINUTE, choices=interval_choices,
                         help='duration of each candlestick')
-    parser.add_argument('-n', '--number-candles', default=1000, type=int, help='number of last candlesticks',
-                        dest='number_candles')
+    parser.add_argument('number_candles', default=1000, type=int, help='number of last candlesticks')
     parser.add_argument('--dataset-directory', default=default_dataset_directory,
                         help='destination of the downloaded dataset', dest='dataset_directory')
 
