@@ -8,20 +8,19 @@ import pandas as pd
 from config import default_dataset_directory
 
 
-def transform_into_sliding_windows(raw_dataset_path, x_window_size, forecast_window_size, trading_fee_percentage,
-                                   window_gap, stride, output_dataset_directory=default_dataset_directory):
+def transform_into_sliding_windows(input_dataset_path, window_size, stride,
+                                   output_dataset_directory=default_dataset_directory):
     """
-    Transform and save a raw dataset into sliding windows, calculating a boolean class "up", which is true if any
-    point in the forecast window goes up, taking buying and selling fees into account, with respect to the last point of
-    the "X" window. If no point exceeds the threshold, "y" is 0.
+    Transform a dataset with class "up" into sliding windows and save it to HDF5.
     Returns:
-        The file path of the resulting transformed dataset
+        The file path of the resulting dataset
     """
     # read dataframe
-    df = pd.read_csv(raw_dataset_path)
+    df = pd.read_csv(input_dataset_path)
 
-    # get the index of 'close' column
-    close_index = df.columns.tolist().index('close')
+    # separate the dataframe from the class "up"
+    up_series = df['up']
+    df = df.drop('up', axis=1)
 
     # get its numpy array representation
     df_array = df.values
@@ -31,21 +30,18 @@ def transform_into_sliding_windows(raw_dataset_path, x_window_size, forecast_win
     up_list = []
 
     # iterate over the dataset
-    for i in range(0, len(df) - (x_window_size + window_gap + forecast_window_size), stride):
+    for i in range(0, len(df) - (window_size - 1), stride):
         # append new X window
-        x_window = df_array[i:i + x_window_size]
+        x_window = df_array[i:i + window_size]
         x_windows_list.append(x_window)
 
-        # append new classes
-        forecast_window = df_array[
-                          i + x_window_size + window_gap:i + x_window_size + window_gap + forecast_window_size,
-                          close_index]
-        profit_threshold = x_window[-1, close_index] / (1 - trading_fee_percentage / 100) ** 2
-        up_list.append(np.any(forecast_window > profit_threshold))
+        # append new class "up" value
+        up_list.append(up_series[i + window_size - 1])
 
-    # save the data
-    output_filename = os.path.splitext(os.path.basename(raw_dataset_path))[0].replace('candles', 'windows')
-    output_file_path = os.path.join(output_dataset_directory, output_filename + '.hdf5')
+    # save the new dataset
+    filename_prefix = f'windows({window_size},{stride})_'
+    output_filename = filename_prefix + os.path.splitext(os.path.basename(input_dataset_path))[0] + '.hdf5'
+    output_file_path = os.path.join(output_dataset_directory, output_filename)
     with h5py.File(output_file_path, 'w') as f:
         x_dataset = f.create_dataset('x', data=np.array(x_windows_list))
         x_dataset.attrs['columns'] = df.columns.tolist()
@@ -57,16 +53,10 @@ def transform_into_sliding_windows(raw_dataset_path, x_window_size, forecast_win
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=transform_into_sliding_windows.__doc__,
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument('raw_dataset_path', help='path of the raw dataset')
-    parser.add_argument('x_window_size', default=100, type=int, help='size of the "X" window')
-    parser.add_argument('forecast_window_size', default=5, type=int,
-                        help='size of the forecast window used to compute the class')
-    parser.add_argument('trading_fee_percentage', type=float,
-                        help='fee as a percentage of the asset purchased')
-    parser.add_argument('-g', '--window-gap', default=0, type=int, dest='window_gap',
-                        help='number of time steps between "X" window and forecast window')
+    parser.add_argument('input_dataset_path', help='path of the input dataset')
+    parser.add_argument('window_size', default=100, type=int, help='size of the sliding windows')
     parser.add_argument('-s', '--stride', default=1, type=int, help='stride of the sliding windows')
     parser.add_argument('--output-dataset-directory', default=default_dataset_directory,
-                        help='destination of the downloaded dataset', dest='output_dataset_directory')
+                        help='destination directory of the resulting dataset', dest='output_dataset_directory')
 
     print(transform_into_sliding_windows(**vars(parser.parse_args())))
