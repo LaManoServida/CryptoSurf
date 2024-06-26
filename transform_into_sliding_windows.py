@@ -1,30 +1,21 @@
-import os.path
-
-import h5py
 import numpy as np
-import pandas as pd
-
-from config import default_dataset_directory
 
 
-def transform_into_sliding_windows(input_dataset_path, window_size, stride=1,
-                                   output_dataset_directory=default_dataset_directory):
+def transform_into_sliding_windows(df, window_size, stride=1):
     """
-    Transform a dataset with class "up" into sliding windows and save it to HDF5.
+    Transform a dataset with class "up" into sliding windows and return the results as numpy arrays.
 
     Args:
-        input_dataset_path (str): Path to the input dataset file.
+        df (pandas.DataFrame): Input DataFrame containing the dataset with an 'up' column.
         window_size (int): Size of the sliding windows to be created.
         stride (int, optional): Stride of the sliding windows. Defaults to 1.
-        output_dataset_directory (str, optional): Destination directory for the resulting dataset.
-            Defaults to a predefined directory.
 
     Returns:
-        str: The file path of the resulting HDF5 dataset.
+        tuple: A 3-tuple containing:
+            - numpy.ndarray: X windows data
+            - numpy.ndarray: up values corresponding to each window
+            - list: Column names of the input DataFrame (excluding 'up')
     """
-
-    # read dataframe
-    df = pd.read_csv(input_dataset_path)
 
     # separate the dataframe from the class "up"
     up_series = df['up']
@@ -46,13 +37,4 @@ def transform_into_sliding_windows(input_dataset_path, window_size, stride=1,
         # append new class "up" value
         up_list.append(up_series[i + window_size - 1])
 
-    # save the new dataset
-    filename_prefix = f'windows({window_size},{stride})_'
-    output_filename = filename_prefix + os.path.splitext(os.path.basename(input_dataset_path))[0] + '.hdf5'
-    output_file_path = os.path.join(output_dataset_directory, output_filename)
-    with h5py.File(output_file_path, 'w') as f:
-        x_dataset = f.create_dataset('x', data=np.array(x_windows_list))
-        x_dataset.attrs['columns'] = df.columns.tolist()
-        f.create_dataset('up', data=np.array(up_list))
-
-    return output_file_path
+    return np.array(x_windows_list), np.array(up_list), df.columns.tolist()
