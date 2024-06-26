@@ -1,4 +1,3 @@
-import argparse
 import os.path
 
 import h5py
@@ -8,13 +7,22 @@ import pandas as pd
 from config import default_dataset_directory
 
 
-def transform_into_sliding_windows(input_dataset_path, window_size, stride,
+def transform_into_sliding_windows(input_dataset_path, window_size, stride=1,
                                    output_dataset_directory=default_dataset_directory):
     """
     Transform a dataset with class "up" into sliding windows and save it to HDF5.
+
+    Args:
+        input_dataset_path (str): Path to the input dataset file.
+        window_size (int): Size of the sliding windows to be created.
+        stride (int, optional): Stride of the sliding windows. Defaults to 1.
+        output_dataset_directory (str, optional): Destination directory for the resulting dataset.
+            Defaults to a predefined directory.
+
     Returns:
-        The file path of the resulting dataset
+        str: The file path of the resulting HDF5 dataset.
     """
+
     # read dataframe
     df = pd.read_csv(input_dataset_path)
 
@@ -48,15 +56,3 @@ def transform_into_sliding_windows(input_dataset_path, window_size, stride,
         f.create_dataset('up', data=np.array(up_list))
 
     return output_file_path
-
-
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description=transform_into_sliding_windows.__doc__,
-                                     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument('input_dataset_path', help='path of the input dataset')
-    parser.add_argument('window_size', default=100, type=int, help='size of the sliding windows')
-    parser.add_argument('-s', '--stride', default=1, type=int, help='stride of the sliding windows')
-    parser.add_argument('--output-dataset-directory', default=default_dataset_directory,
-                        help='destination directory of the resulting dataset', dest='output_dataset_directory')
-
-    print(transform_into_sliding_windows(**vars(parser.parse_args())))

@@ -1,4 +1,3 @@
-import argparse
 import os.path
 
 import numpy as np
@@ -7,14 +6,25 @@ import pandas as pd
 from config import default_dataset_directory
 
 
-def calculate_class_up(input_dataset_path, forecast_window_size, trading_fee_percentage, window_gap,
+def calculate_class_up(input_dataset_path, forecast_window_size, trading_fee_percentage, window_gap=0,
                        output_dataset_directory=default_dataset_directory):
     """
     Calculate and add to the dataset a boolean class "up", which is true if any point in the forecast window goes up
     with respect to the "close" value, taking buying and selling fees into account.
+
+    Args:
+        input_dataset_path (str): Path to the input dataset file.
+        forecast_window_size (int): Size of the forecast window used to compute the "up" class.
+        trading_fee_percentage (float): Fee as a percentage of the asset purchased, used in calculations.
+        window_gap (int, optional): Number of time steps between the latest "close" value and the forecast window.
+            Defaults to 0.
+        output_dataset_directory (str, optional): Destination directory for the resulting dataset.
+            Defaults to a predefined directory.
+
     Returns:
-        The file path of the resulting dataset
+        str: The file path of the resulting dataset.
     """
+
     # read dataframe
     df = pd.read_csv(input_dataset_path)
 
@@ -44,19 +54,3 @@ def calculate_class_up(input_dataset_path, forecast_window_size, trading_fee_per
     df.to_csv(output_file_path, index=False)
 
     return output_file_path
-
-
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description=calculate_class_up.__doc__,
-                                     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument('input_dataset_path', help='path of the input dataset')
-    parser.add_argument('forecast_window_size', default=5, type=int,
-                        help='size of the forecast window used to compute the class')
-    parser.add_argument('trading_fee_percentage', type=float,
-                        help='fee as a percentage of the asset purchased')
-    parser.add_argument('-g', '--window-gap', default=0, type=int, dest='window_gap',
-                        help='number of time steps between the "close" value and the forecast window')
-    parser.add_argument('--output-dataset-directory', default=default_dataset_directory,
-                        help='destination directory of the resulting dataset', dest='output_dataset_directory')
-
-    print(calculate_class_up(**vars(parser.parse_args())))
