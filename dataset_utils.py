@@ -72,7 +72,7 @@ def calculate_class_up(df, forecast_horizon, trading_fee_percentage, forecast_ga
     df = df.iloc[:-forecast_gap - forecast_horizon]
 
     # add the new column
-    df['up'] = up_list
+    df = df.assign(up=up_list)
 
     return df
 
