@@ -49,8 +49,8 @@ def calculate_class_up(df, forecast_horizon, trading_fee_percentage, forecast_ga
         forecast_gap (int, optional): Number of time steps between the latest "close" value and the forecast horizon.
             Defaults to 0.
 
-    Returns:
-        pandas.DataFrame: The input DataFrame with the added "up" column.
+    Returns: pandas.DataFrame: The input DataFrame with the added "up" column. The last few rows are removed as it is
+    not possible to compute "up" values out of them.
     """
 
     # get the index of 'close' column
@@ -68,8 +68,8 @@ def calculate_class_up(df, forecast_horizon, trading_fee_percentage, forecast_ga
         forecast_window = df_array[i + 1 + forecast_gap:i + 1 + forecast_gap + forecast_horizon, close_index]
         up_list.append(np.any(forecast_window > profit_thresholds[i]))
 
-    # pad with NaNs
-    up_list += [np.nan] * (forecast_gap + forecast_horizon)
+    # get rid of the last few rows of df, as it was not possible to compute "up" for them
+    df = df.iloc[:-forecast_gap - forecast_horizon]
 
     # add the new column
     df['up'] = up_list
