@@ -23,12 +23,14 @@ def calculate_class_up(df, forecast_window_size, trading_fee_percentage, window_
     # get its numpy array representation
     df_array = df.values
 
+    # calculate profit thresholds for all rows in advance
+    profit_thresholds = df_array[:, close_index] / (1 - trading_fee_percentage / 100) ** 2
+
     # iterate over the dataset
     up_list = []
     for i in range(0, len(df) - (window_gap + forecast_window_size)):
         forecast_window = df_array[i + 1 + window_gap:i + 1 + window_gap + forecast_window_size, close_index]
-        profit_threshold = df_array[i, close_index] / (1 - trading_fee_percentage / 100) ** 2
-        up_list.append(np.any(forecast_window > profit_threshold))
+        up_list.append(np.any(forecast_window > profit_thresholds[i]))
 
     # pad with NaNs
     up_list += [np.nan] * (window_gap + forecast_window_size)
