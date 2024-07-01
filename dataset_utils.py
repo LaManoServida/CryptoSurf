@@ -1,3 +1,4 @@
+import logging
 import time
 
 import numpy as np
@@ -5,6 +6,9 @@ import pandas as pd
 from binance import Client
 
 from config import api_key, api_secret
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(levelname)s] %(module)s: %(message)s',
+                    datefmt='%Y-%m-%d %H:%M:%S')
 
 
 def download_raw_dataset(symbol, interval, start_timestamp_millis, end_timestamp_millis=int(time.time() * 1000)):
@@ -19,6 +23,8 @@ def download_raw_dataset(symbol, interval, start_timestamp_millis, end_timestamp
     Returns:
         pandas.DataFrame: The downloaded dataset as a DataFrame.
     """
+
+    logging.info('Downloading the raw dataset')
 
     # create client
     client = Client(api_key, api_secret)
@@ -52,6 +58,8 @@ def calculate_class_up(df, forecast_horizon, trading_fee_percentage, forecast_ga
     Returns: pandas.DataFrame: The input DataFrame with the added "up" column. The last few rows are removed as it is
     not possible to compute "up" values out of them.
     """
+
+    logging.info("Calculating the class 'up'")
 
     # get the index of 'close' column
     close_index = df.columns.tolist().index('close')
@@ -92,6 +100,8 @@ def transform_into_sliding_windows(df, window_size, stride=1):
             - numpy.ndarray: up values corresponding to each window
             - list: Column names of the input DataFrame (excluding 'up')
     """
+
+    logging.info("Transforming the dataset into sliding windows")
 
     # separate the dataframe from the class "up"
     up_series = df['up']
