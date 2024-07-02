@@ -6,8 +6,9 @@ from logger import logger
 
 def add_class_up(df, forecast_horizon, trading_fee_percentage, forecast_gap=0):
     """
-    Calculate and add to the dataset a boolean class "up", which is true if any point in the forecast horizon goes up
-    with respect to the "close" value, taking buying and selling fees into account.
+    Calculate and add to the dataset the class "up", containing 0, 1 and NaN values. The values are 1 if any point in
+    the forecast horizon goes up with respect to the "close" value, taking buying and selling fees into account,
+    and 0 otherwise.
 
     Args:
         df (pandas.DataFrame): Input DataFrame containing the dataset.
@@ -16,11 +17,11 @@ def add_class_up(df, forecast_horizon, trading_fee_percentage, forecast_gap=0):
         forecast_gap (int, optional): Number of time steps between the latest "close" value and the forecast horizon.
             Defaults to 0.
 
-    Returns: pandas.DataFrame: The input DataFrame with the added "up" column. The last few rows are removed as it is
-    not possible to compute "up" values out of them.
+    Returns:
+        pandas.DataFrame: The input DataFrame with the added "up" column.
     """
 
-    logger.info("Calculating the class 'up'")
+    logger.info('Calculating the class "up"')
 
     # get the index of 'close' column
     close_index = df.columns.tolist().index('close')
@@ -37,8 +38,8 @@ def add_class_up(df, forecast_horizon, trading_fee_percentage, forecast_gap=0):
         forecast_window = df_array[i + 1 + forecast_gap:i + 1 + forecast_gap + forecast_horizon, close_index]
         up_list.append(np.any(forecast_window > profit_thresholds[i]))
 
-    # get rid of the last few rows of df, as it was not possible to compute "up" for them # TODO: rollback
-    df = df.iloc[:-forecast_gap - forecast_horizon]
+    # add NaNs for the last few rows, as it was not possible to compute "up" for them
+    up_list.extend([np.nan] * (forecast_gap + forecast_horizon))
 
     # add the new column
     df = df.assign(up=up_list)

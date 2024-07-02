@@ -56,7 +56,7 @@ def transform_into_sliding_windows(df, window_size, stride=1):
             - list: Column names of the input DataFrame (excluding 'up')
     """
 
-    logger.info("Transforming the dataset into sliding windows")
+    logger.info('Transforming the dataset into sliding windows')
 
     # separate the dataframe from the class "up"
     up_series = df['up']
