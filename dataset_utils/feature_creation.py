@@ -3,7 +3,7 @@ import numpy as np
 from logger import logger
 
 
-def calculate_class_up(df, forecast_horizon, trading_fee_percentage, forecast_gap=0):
+def add_class_up(df, forecast_horizon, trading_fee_percentage, forecast_gap=0):
     """
     Calculate and add to the dataset a boolean class "up", which is true if any point in the forecast horizon goes up
     with respect to the "close" value, taking buying and selling fees into account.
