@@ -1,4 +1,3 @@
-import logging
 import time
 
 import numpy as np
@@ -6,9 +5,7 @@ import pandas as pd
 from binance import Client
 
 from config import api_key, api_secret
-
-logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(levelname)s] %(module)s: %(message)s',
-                    datefmt='%Y-%m-%d %H:%M:%S')
+from logger import logger
 
 
 def download_raw_dataset(symbol, interval, start_timestamp_millis, end_timestamp_millis=int(time.time() * 1000)):
@@ -24,7 +21,7 @@ def download_raw_dataset(symbol, interval, start_timestamp_millis, end_timestamp
         pandas.DataFrame: The downloaded dataset as a DataFrame.
     """
 
-    logging.info('Downloading the raw dataset')
+    logger.info('Downloading the raw dataset')
 
     # create client
     client = Client(api_key, api_secret)
@@ -39,48 +36,6 @@ def download_raw_dataset(symbol, interval, start_timestamp_millis, end_timestamp
         columns=['open_time', 'open', 'high', 'low', 'close', 'volume', 'close_time', 'quote_asset_volume',
                  'number_of_trades', 'taker_buy_base_asset_volume', 'taker_buy_quote_asset_volume', 'ignore']
     ).drop(['close_time', 'ignore'], axis=1).apply(pd.to_numeric)
-
-    return df
-
-
-def calculate_class_up(df, forecast_horizon, trading_fee_percentage, forecast_gap=0):
-    """
-    Calculate and add to the dataset a boolean class "up", which is true if any point in the forecast horizon goes up
-    with respect to the "close" value, taking buying and selling fees into account.
-
-    Args:
-        df (pandas.DataFrame): Input DataFrame containing the dataset.
-        forecast_horizon (int): Size of the forecast horizon used to compute the "up" class.
-        trading_fee_percentage (float): Fee as a percentage of the asset purchased, used in calculations.
-        forecast_gap (int, optional): Number of time steps between the latest "close" value and the forecast horizon.
-            Defaults to 0.
-
-    Returns: pandas.DataFrame: The input DataFrame with the added "up" column. The last few rows are removed as it is
-    not possible to compute "up" values out of them.
-    """
-
-    logging.info("Calculating the class 'up'")
-
-    # get the index of 'close' column
-    close_index = df.columns.tolist().index('close')
-
-    # get its numpy array representation
-    df_array = df.values
-
-    # calculate profit thresholds for all rows in advance
-    profit_thresholds = df_array[:, close_index] / (1 - trading_fee_percentage / 100) ** 2
-
-    # iterate over the dataset
-    up_list = []
-    for i in range(0, len(df) - (forecast_gap + forecast_horizon)):
-        forecast_window = df_array[i + 1 + forecast_gap:i + 1 + forecast_gap + forecast_horizon, close_index]
-        up_list.append(np.any(forecast_window > profit_thresholds[i]))
-
-    # get rid of the last few rows of df, as it was not possible to compute "up" for them
-    df = df.iloc[:-forecast_gap - forecast_horizon]
-
-    # add the new column
-    df = df.assign(up=up_list)
 
     return df
 
@@ -101,7 +56,7 @@ def transform_into_sliding_windows(df, window_size, stride=1):
             - list: Column names of the input DataFrame (excluding 'up')
     """
 
-    logging.info("Transforming the dataset into sliding windows")
+    logger.info("Transforming the dataset into sliding windows")
 
     # separate the dataframe from the class "up"
     up_series = df['up']
