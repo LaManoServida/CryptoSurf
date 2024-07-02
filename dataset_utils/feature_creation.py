@@ -110,23 +110,3 @@ def add_williams_percent_r(df, period=14):
 
 def add_lagged_values(df, column_name, period):
     df[f'{column_name}_lagged_{period}'] = df[column_name].shift(period)
-
-# def add_wma(df, period):
-#     weights = np.arange(1, period + 1)
-#     df['wma'] = df['close'].rolling(window=period).apply(lambda x: np.dot(x, weights) / weights.sum(), raw=True)
-#
-#
-#
-# def add_kama(df, n):
-#     fastest_sc = 2 / (2 + 1)
-#     slowest_sc = 2 / (30 + 1)
-#
-#     change = abs(df['close'] - df['close'].shift(n))
-#     volatility = df['close'].diff().abs().rolling(window=n).sum()
-#
-#     er = change / volatility
-#     sc = (er * (fastest_sc - slowest_sc) + slowest_sc) ** 2
-#
-#     df['KAMA'] = df['close'].copy()
-#     for i in range(n, len(df)):
-#         df['KAMA'].iloc[i] = df['KAMA'].iloc[i - 1] + sc.iloc[i] * (df['close'].iloc[i] - df['KAMA'].iloc[i - 1])
