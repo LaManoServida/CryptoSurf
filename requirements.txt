@@ -3,3 +3,6 @@ numpy < 2.0.0
 pandas
 keras
 TA-Lib
+Boruta
+scikit-learn
+statsmodels
