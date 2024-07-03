@@ -1,7 +1,5 @@
 python-binance
 numpy < 2.0.0
 pandas
-python-dateutil
-h5py
 keras
 TA-Lib
