@@ -3,21 +3,11 @@ from dataset_utils.feature_creation import *
 
 
 def main():
-    end_dates = [1469923200000, 1493510400000, 1514678400000, 1636156800000]
+    df = download_raw_dataset('BTCUSDT', '1d', 1364774400000, 1720009820000)
 
-    for i, end_date in enumerate(end_dates):
-        df = download_raw_dataset('BTCUSDT', '1d', 1364774400000, end_date)
-
-        if i == 3:
-            forecast_horizons = [1, 3, 5, 7]
-        else:
-            forecast_horizons = [1]
-
-        for forecast_horizon in forecast_horizons:
-            add_class_up(df, forecast_horizon, 0, forecast_gap=0)
-            add_new_features(df)
-
-            # X_windows, y, column_names = transform_into_sliding_windows(df, 48, 1)
+    for forecast_horizon in [1, 3, 5, 7]:
+        add_class_up(df, forecast_horizon, 0, forecast_gap=0)
+        add_new_features(df)
 
 
 def add_new_features(df):
@@ -44,6 +34,8 @@ def add_new_features(df):
     add_lagged_values(df, column_name='close', period=1)
     add_lagged_values(df, column_name='close', period=2)
     add_lagged_values(df, column_name='close', period=3)
+
+    df.dropna(inplace=True)
 
 
 if __name__ == '__main__':
