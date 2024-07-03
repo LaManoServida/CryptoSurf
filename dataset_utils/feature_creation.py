@@ -16,9 +16,6 @@ def add_class_up(df, forecast_horizon, trading_fee_percentage, forecast_gap=0):
         trading_fee_percentage (float): Fee as a percentage of the asset purchased, used in calculations.
         forecast_gap (int, optional): Number of time steps between the latest "close" value and the forecast horizon.
             Defaults to 0.
-
-    Returns:
-        pandas.DataFrame: The input DataFrame with the added "up" column.
     """
 
     logger.info('Calculating the class "up"')
@@ -41,10 +38,8 @@ def add_class_up(df, forecast_horizon, trading_fee_percentage, forecast_gap=0):
     # add NaNs for the last few rows, as it was not possible to compute "up" for them
     up_list.extend([np.nan] * (forecast_gap + forecast_horizon))
 
-    # add the new column
-    df = df.assign(up=up_list)
-
-    return df
+    # add the new column in place
+    df['up'] = up_list
 
 
 def add_sma(df, period):
