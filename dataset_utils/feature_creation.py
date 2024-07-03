@@ -51,6 +51,8 @@ def add_sma(df, period):
         period (int): The number of periods to use in the SMA calculation.
     """
 
+    logger.info('Calculating Simple Moving Average (SMA)')
+
     df[f'sma_{period}'] = talib.SMA(df['close'], period)
 
 
@@ -62,6 +64,8 @@ def add_vama(df, period):
         df (pandas.DataFrame): The input DataFrame containing price and volume data.
         period (int): The number of periods to use in the VAMA calculation.
     """
+
+    logger.info('Calculating Volume Adjusted Moving Average (VAMA)')
 
     volume_price = df['close'] * df['volume']
     df[f'vama_{period}'] = volume_price.rolling(window=period).sum() / df['volume'].rolling(window=period).sum()
@@ -76,6 +80,8 @@ def add_tema(df, period):
         period (int): The number of periods to use in the TEMA calculation.
     """
 
+    logger.info('Calculating Triple Exponential Moving Average (TEMA)')
+
     df[f'tema_{period}'] = talib.TEMA(df['close'], period)
 
 
@@ -87,6 +93,8 @@ def add_ema(df, period):
         df (pandas.DataFrame): The input DataFrame containing price data.
         period (int): The number of periods to use in the EMA calculation.
     """
+
+    logger.info('Calculating Exponential Moving Average (EMA)')
 
     df[f'ema_{period}'] = talib.EMA(df['close'], period)
 
@@ -100,6 +108,8 @@ def add_dema(df, period):
         period (int): The number of periods to use in the DEMA calculation.
     """
 
+    logger.info('Calculating Double Exponential Moving Average (DEMA)')
+
     df[f'dema_{period}'] = talib.DEMA(df['close'], period)
 
 
@@ -111,6 +121,8 @@ def add_mom(df, period=10):
         df (pandas.DataFrame): The input DataFrame containing price data.
         period (int, optional): The number of periods to use in the Momentum calculation. Defaults to 10.
     """
+
+    logger.info('Calculating Momentum indicator')
 
     df[f'mom_{period}'] = talib.MOM(df['close'], period)
 
@@ -125,6 +137,8 @@ def add_macd(df, fast_period=12, slow_period=26, signal_period=9):
         slow_period (int, optional): The number of periods for the slow EMA. Defaults to 26.
         signal_period (int, optional): The number of periods for the signal line. Defaults to 9.
     """
+
+    logger.info('Calculating Moving Average Convergence/Divergence (MACD)')
 
     df[f'macd_{fast_period}_{slow_period}_{signal_period}'] = \
         talib.MACD(df['close'], fast_period, slow_period, signal_period)[0]
@@ -142,6 +156,8 @@ def add_percent_b(df, period=5, stddev_upper=2, stddev_lower=2, ma_type=0):
         ma_type (int, optional): The moving average type. Defaults to 0 (Simple Moving Average).
     """
 
+    logger.info('Calculating %B indicator')
+
     upper_band, _, lower_band = talib.BBANDS(df['close'], period, stddev_upper, stddev_lower, ma_type)
     df[f'percent_b_{period}_{stddev_upper}_{stddev_lower}_{ma_type}'] = \
         (df['close'] - lower_band) / (upper_band - lower_band) * 100
@@ -155,6 +171,8 @@ def chaikin_oscillator(df):
         df (pandas.DataFrame): The input DataFrame containing price and volume data.
     """
 
+    logger.info('Calculating Chaikin A/D Oscillator')
+
     df['chaikin_oscillator'] = talib.ADOSC(df['high'], df['low'], df['close'], df['volume'])
 
 
@@ -166,6 +184,8 @@ def add_roc(df, period=10):
         df (pandas.DataFrame): The input DataFrame containing price data.
         period (int, optional): The number of periods to use in the ROC calculation. Defaults to 10.
     """
+
+    logger.info('Calculating Rate of Change (ROC) indicator')
 
     df[f'roc_{period}'] = talib.ROC(df['close'], period)
 
@@ -183,6 +203,8 @@ def add_so(df, fastk_period=5, slow_k_period=3, slow_k_ma_type=0, slow_d_period=
         slow_d_ma_type (int, optional): The moving average type for the slow %D. Defaults to 0 (Simple Moving Average).
     """
 
+    logger.info('Calculating Stochastic Oscillator')
+
     df[f'so_{fastk_period}_{slow_k_period}_{slow_k_ma_type}_{slow_d_period}_{slow_d_ma_type}'] = \
         talib.STOCH(df['high'], df['low'], df['close'], fastk_period, slow_k_period, slow_k_ma_type, slow_d_period,
                     slow_d_ma_type)[0]
@@ -197,6 +219,8 @@ def add_trix(df, period=30):
         period (int, optional): The number of periods to use in the TRIX calculation. Defaults to 30.
     """
 
+    logger.info('Calculating TRIX indicator')
+
     df[f'trix_{period}'] = talib.TRIX(df['close'], period)
 
 
@@ -208,6 +232,8 @@ def add_rsi(df, period=14):
         df (pandas.DataFrame): The input DataFrame containing price data.
         period (int, optional): The number of periods to use in the RSI calculation. Defaults to 14.
     """
+
+    logger.info('Calculating Relative Strength Index (RSI)')
 
     df[f'rsi_{period}'] = talib.RSI(df['close'], period)
 
@@ -221,6 +247,8 @@ def add_williams_percent_r(df, period=14):
         period (int, optional): The number of periods to use in the Williams %R calculation. Defaults to 14.
     """
 
+    logger.info('Calculating Williams %R indicator')
+
     df[f'williams_percent_r_{period}'] = talib.WILLR(df['high'], df['low'], df['close'], period)
 
 
@@ -233,5 +261,7 @@ def add_lagged_values(df, column_name, period):
         column_name (str): The name of the column to lag.
         period (int): The number of periods to lag the values.
     """
+
+    logger.info(f'Adding lagged values for {column_name}')
 
     df[f'{column_name}_lagged_{period}'] = df[column_name].shift(period)
