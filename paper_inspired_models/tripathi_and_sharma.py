@@ -1,4 +1,4 @@
-from dataset_utils.data_preprocessing import apply_hampel_filter
+from dataset_utils.data_preprocessing import apply_hampel_filter, apply_sg_filter
 from dataset_utils.dataset_generation import download_raw_dataset
 from dataset_utils.feature_creation import *
 
@@ -11,6 +11,7 @@ def main():
         add_new_features(df)
         df.dropna(inplace=True)
         apply_hampel_filter(df, 'close', window_size=15, n_sigmas=3)
+        apply_sg_filter(df, 'close', window_size=51, polynomial_degree=5, mode='nearest')
 
 
 def add_new_features(df):

@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from scipy.signal import savgol_filter
 
 from logger import logger
 
@@ -30,3 +31,22 @@ def apply_hampel_filter(df, column, window_size=15, n_sigmas=3):
 
     # Replace outliers with the rolling median
     df.loc[outliers, column] = rolling_median[outliers]
+
+
+def apply_sg_filter(df, column, window_size=51, polynomial_degree=5, mode='nearest'):
+    """
+    Apply Savitzky-Golay filter to smooth the specified column in the DataFrame.
+
+    Args:
+        df (pd.DataFrame): DataFrame containing the data.
+        column (str): Name of the column to apply the filter to.
+        window_size (int, optional): The length of the filter window (i.e., the number of coefficients).
+            Must be a positive odd integer. Defaults to 51.
+        polynomial_degree (int, optional): The order of the polynomial used to fit the samples.
+            Must be less than window_size. Defaults to 5.
+        mode (str, optional): Determines how the array borders are handled. Default is 'nearest'.
+    """
+
+    logger.info(f'Applying Savitzky-Golay filter to {column}')
+
+    df[column] = savgol_filter(df[column], window_size, polynomial_degree, mode=mode)

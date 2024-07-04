@@ -6,3 +6,4 @@ TA-Lib
 Boruta
 scikit-learn
 statsmodels
+scipy
