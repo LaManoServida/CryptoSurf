@@ -1,3 +1,4 @@
+from dataset_utils.data_preprocessing import apply_hampel_filter
 from dataset_utils.dataset_generation import download_raw_dataset
 from dataset_utils.feature_creation import *
 
@@ -8,6 +9,7 @@ def main():
     for forecast_horizon in [1, 3, 5, 7]:
         add_class_up(df, forecast_horizon, 0, forecast_gap=0)
         add_new_features(df)
+        apply_hampel_filter(df, 'close', window_size=15, n_sigmas=3)
 
 
 def add_new_features(df):
