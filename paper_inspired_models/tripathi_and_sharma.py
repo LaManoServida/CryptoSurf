@@ -9,6 +9,7 @@ def main():
     for forecast_horizon in [1, 3, 5, 7]:
         add_class_up(df, forecast_horizon, 0, forecast_gap=0)
         add_new_features(df)
+        df.dropna(inplace=True)
         apply_hampel_filter(df, 'close', window_size=15, n_sigmas=3)
 
 
@@ -36,8 +37,6 @@ def add_new_features(df):
     add_lagged_values(df, column_name='close', period=1)
     add_lagged_values(df, column_name='close', period=2)
     add_lagged_values(df, column_name='close', period=3)
-
-    df.dropna(inplace=True)
 
 
 if __name__ == '__main__':
