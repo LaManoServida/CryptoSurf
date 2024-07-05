@@ -110,3 +110,23 @@ def split_train_val_test(df, training_size, validation_size):
     test_df = df.iloc[val_end:]
 
     return train_df, val_df, test_df
+
+
+def split_x_y(df, y_column='up'):
+    """
+    Split the dataset into X and y.
+
+    Args:
+        df (pandas.DataFrame): Input DataFrame containing the dataset.
+        y_column (str, optional): Name of the column containing the class. Defaults to 'up'.
+
+    Returns:
+        tuple: A 2-tuple containing:
+
+            - numpy.ndarray: X
+            - numpy.ndarray: y
+    """
+
+    logger.info('Splitting the dataset into X and y')
+
+    return df.drop(y_column, axis=1).values, df[y_column].values
