@@ -1,6 +1,6 @@
 from dataset_utils.data_preprocessing import apply_hampel_filter, apply_sg_filter, apply_standard_scaler, \
     apply_robust_scaler
-from dataset_utils.dataset_generation import download_raw_dataset, split_dataset
+from dataset_utils.dataset_generation import download_raw_dataset, split_train_val_test
 from dataset_utils.feature_creation import *
 
 
@@ -16,7 +16,7 @@ def main():
         apply_sg_filter(df, 'close', window_size=51, polynomial_degree=5, mode='nearest')
         apply_standard_scaler(df, exclude_columns=['up'])
         apply_robust_scaler(df, exclude_columns=['up'])
-        df_train, df_val, df_test = split_dataset(df, 0.7, 0.15)
+        df_train, df_val, df_test = split_train_val_test(df, 0.7, 0.15)
 
 
 def add_new_features(df):

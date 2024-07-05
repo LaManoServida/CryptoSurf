@@ -81,7 +81,7 @@ def transform_into_sliding_windows(df, window_size, stride=1):
     return np.array(x_windows_list), np.array(up_list), df.columns.tolist()
 
 
-def split_dataset(df, training_size, validation_size):
+def split_train_val_test(df, training_size, validation_size):
     """
     Split the dataset into training, validation and test sets.
 
