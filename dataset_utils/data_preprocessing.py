@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 from scipy.signal import savgol_filter
+from sklearn.preprocessing import RobustScaler, StandardScaler
 
 from logger import logger
 
@@ -50,3 +51,23 @@ def apply_sg_filter(df, column, window_size=51, polynomial_degree=5, mode='neare
     logger.info(f'Applying Savitzky-Golay filter to {column}')
 
     df[column] = savgol_filter(df[column], window_size, polynomial_degree, mode=mode)
+
+
+def apply_standard_scaler(df, exclude_columns=None):
+    logger.info(f'Applying Standard Scaler to all columns except {exclude_columns}')
+
+    if exclude_columns is None:
+        exclude_columns = []
+
+    df[df.columns.difference(exclude_columns)] = StandardScaler().fit_transform(
+        df[df.columns.difference(exclude_columns)])
+
+
+def apply_robust_scaler(df, exclude_columns=None):
+    logger.info(f'Applying Robust Scaler to all columns except {exclude_columns}')
+
+    if exclude_columns is None:
+        exclude_columns = []
+
+    df[df.columns.difference(exclude_columns)] = RobustScaler().fit_transform(
+        df[df.columns.difference(exclude_columns)])

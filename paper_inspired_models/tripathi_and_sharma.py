@@ -1,17 +1,21 @@
-from dataset_utils.data_preprocessing import apply_hampel_filter, apply_sg_filter
+from dataset_utils.data_preprocessing import apply_hampel_filter, apply_sg_filter, apply_standard_scaler, \
+    apply_robust_scaler
 from dataset_utils.dataset_generation import download_raw_dataset
 from dataset_utils.feature_creation import *
 
 
 def main():
-    df = download_raw_dataset('BTCUSDT', '1d', 1364774400000, 1720009820000)
+    df_original = download_raw_dataset('BTCUSDT', '1d', 1364774400000, 1720009820000)
 
     for forecast_horizon in [1, 3, 5, 7]:
+        df = df_original.copy()
         add_class_up(df, forecast_horizon, 0, forecast_gap=0)
         add_new_features(df)
         df.dropna(inplace=True)
         apply_hampel_filter(df, 'close', window_size=15, n_sigmas=3)
         apply_sg_filter(df, 'close', window_size=51, polynomial_degree=5, mode='nearest')
+        apply_standard_scaler(df, exclude_columns=['up'])
+        apply_robust_scaler(df, exclude_columns=['up'])
 
 
 def add_new_features(df):
