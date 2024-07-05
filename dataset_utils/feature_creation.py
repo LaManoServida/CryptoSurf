@@ -40,6 +40,7 @@ def add_class_up(df, forecast_horizon, trading_fee_percentage, forecast_gap=0):
 
     # add the new column in place
     df['up'] = up_list
+    df['up'] = df['up'].astype(float)
 
 
 def add_sma(df, period):
