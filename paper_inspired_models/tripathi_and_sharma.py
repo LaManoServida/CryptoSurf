@@ -14,9 +14,12 @@ def main():
         df.dropna(inplace=True)
         apply_hampel_filter(df, 'close', window_size=15, n_sigmas=3)
         apply_sg_filter(df, 'close', window_size=51, polynomial_degree=5, mode='nearest')
-        apply_standard_scaler(df, exclude_columns=['up'])
-        apply_robust_scaler(df, exclude_columns=['up'])
         df_train, df_val, df_test = split_train_val_test(df, 0.7, 0.15)
+
+        # Apply scaling to each split separately
+        for split_df in [df_train, df_val, df_test]:
+            apply_standard_scaler(split_df, exclude_columns=['up'])
+            apply_robust_scaler(split_df, exclude_columns=['up'])
 
         # Split the DataFrame into X and y
         x_train, y_train = split_x_y(df_train)
