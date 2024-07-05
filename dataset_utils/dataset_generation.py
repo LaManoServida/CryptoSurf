@@ -51,6 +51,7 @@ def transform_into_sliding_windows(df, window_size, stride=1):
 
     Returns:
         tuple: A 3-tuple containing:
+
             - numpy.ndarray: X windows data
             - numpy.ndarray: up values corresponding to each window
             - list: Column names of the input DataFrame (excluding 'up')
@@ -92,6 +93,7 @@ def split_train_val_test(df, training_size, validation_size):
 
     Returns:
         tuple: A 3-tuple containing:
+
             - pandas.DataFrame: Training set
             - pandas.DataFrame: Validation set
             - pandas.DataFrame: Test set
