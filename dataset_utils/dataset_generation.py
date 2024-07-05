@@ -79,3 +79,32 @@ def transform_into_sliding_windows(df, window_size, stride=1):
         up_list.append(up_series[i + window_size - 1])
 
     return np.array(x_windows_list), np.array(up_list), df.columns.tolist()
+
+
+def split_dataset(df, training_size, validation_size):
+    """
+    Split the dataset into training, validation and test sets.
+
+    Args:
+        df (pandas.DataFrame): Input DataFrame containing the dataset.
+        training_size (float): Percentage of the dataset to be used for training.
+        validation_size (float): Percentage of the dataset to be used for validation.
+
+    Returns:
+        tuple: A 3-tuple containing:
+            - pandas.DataFrame: Training set
+            - pandas.DataFrame: Validation set
+            - pandas.DataFrame: Test set
+    """
+
+    logger.info('Splitting the dataset into training, validation and test sets')
+
+    total_size = len(df)
+    train_end = int(total_size * training_size)
+    val_end = train_end + int(total_size * validation_size)
+
+    train_df = df.iloc[:train_end]
+    val_df = df.iloc[train_end:val_end]
+    test_df = df.iloc[val_end:]
+
+    return train_df, val_df, test_df
